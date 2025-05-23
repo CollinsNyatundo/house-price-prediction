@@ -678,9 +678,6 @@ def main():
             st.caption(f"Exchange rate: $1 = KSh {KES_EXCHANGE_RATE} (as of today)")
     
     with cols[2]:
-        # Force a unique string that changes with every rerun to ensure display refreshes
-        # This approach ensures the date is truly current when displayed
-        
         # Handle date display based on timezone support availability
         if TIMEZONE_SUPPORT:
             now_utc = datetime.now(pytz.UTC)  # Get current UTC time
@@ -764,8 +761,9 @@ def main():
         """, unsafe_allow_html=True)
         
         # Also show the date in regular Streamlit elements to confirm updating
-        st.write(" ")  # Add some spacing
-        st.text(f"Timestamp: {timestamp}")
+        # Remove the timestamp display
+        # st.write(" ")  # Add some spacing
+        # st.text(f"Timestamp: {timestamp}")
         
         model_accuracy = metrics['test_r2'] * 100
         st.markdown(f"**Model Accuracy:**  \n{model_accuracy:.1f}%")
