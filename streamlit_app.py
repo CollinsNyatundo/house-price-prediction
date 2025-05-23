@@ -495,8 +495,9 @@ def main():
     
     model, importance, metrics = train_model(X, y)
     
-    # Make prediction
-    prediction = model.predict([[size, bedrooms, bathrooms]])
+    # Make prediction - Fix feature names issue by creating a DataFrame with proper column names
+    input_data = pd.DataFrame([[size, bedrooms, bathrooms]], columns=['Size', 'Bedrooms', 'Bathrooms'])
+    prediction = model.predict(input_data)
     predicted_price = prediction[0]
     
     # Display feature explanations for non-technical users
@@ -542,7 +543,7 @@ def main():
         
         if st.button(button_label, key="kes_converter"):
             st.session_state.show_kes = not st.session_state.show_kes
-            st.experimental_rerun()
+            st.rerun()  # Using st.rerun() instead of st.experimental_rerun()
             
         if st.session_state.show_kes:
             st.caption(f"Exchange rate: $1 = KSh {KES_EXCHANGE_RATE} (as of today)")
@@ -659,7 +660,7 @@ def main():
             <span>Data is simulated for demonstration</span>
         </div>
         <div style="font-size: 0.8rem; color: rgba(255, 255, 255, 0.7);">
-            Made by Collins N. Nyagaka | Last Updated: May 2023
+            Made by Collins N. Nyagaka | Last Updated: May 2025
         </div>
     </div>
     """, unsafe_allow_html=True)
