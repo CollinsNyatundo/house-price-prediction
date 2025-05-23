@@ -49,10 +49,12 @@ git push -u origin master
 ## Common Issues
 
 If you encounter authentication issues:
+
 - For HTTPS: You may be prompted for your GitHub username and password or personal access token
 - For SSH: Ensure your SSH key is added to your GitHub account and SSH agent
 
 If you need to update your code later:
+
 ```bash
 # Make changes to your code
 git add .
@@ -63,10 +65,11 @@ git push
 ## Troubleshooting
 
 If you see an error like "remote origin already exists", run:
+
 ```bash
 git remote remove origin
 ```
 
 Then try adding the remote again.
 
-If you see an error about invalid repository name, check for typos in your username or repository name. 
+If you see an error about invalid repository name, check for typos in your username or repository name.
