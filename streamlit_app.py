@@ -164,29 +164,34 @@ def main():
     st.title("House Price Prediction")
     st.write("Predict house prices based on features")
     
-    # Sidebar for inputs
-    st.sidebar.header("House Features")
+    # Sliders at the top of the page
+    st.subheader("House Features")
     
-    size = st.sidebar.slider(
-        "Size (sq ft)", 
-        min_value=1000,
-        max_value=3500,
-        value=2000
-    )
+    col1, col2, col3 = st.columns(3)
     
-    bedrooms = st.sidebar.slider(
-        "Bedrooms",
-        min_value=1,
-        max_value=5,
-        value=2
-    )
+    with col1:
+        size = st.slider(
+            "Size (sq ft)", 
+            min_value=1000,
+            max_value=3500,
+            value=2000
+        )
     
-    bathrooms = st.sidebar.slider(
-        "Bathrooms",
-        min_value=1,
-        max_value=3,
-        value=2
-    )
+    with col2:
+        bedrooms = st.slider(
+            "Bedrooms",
+            min_value=1,
+            max_value=5,
+            value=2
+        )
+    
+    with col3:
+        bathrooms = st.slider(
+            "Bathrooms",
+            min_value=1,
+            max_value=3,
+            value=2
+        )
     
     # Generate data and train model
     house_data = generate_house_data()
@@ -200,27 +205,23 @@ def main():
     prediction = model.predict([[size, bedrooms, bathrooms]])
     predicted_price = prediction[0]
     
-    # Display results
-    col1, col2 = st.columns([2, 1])
+    # Prediction results
+    st.subheader("Prediction Results")
+    st.metric("Predicted House Price", f"${predicted_price:,.2f}")
     
-    with col1:
-        st.subheader("Visualization")
-        # Create and display 3D scatter plot
-        fig = create_3d_scatter(
-            house_data,
-            highlight_point={'Size': size, 'Bedrooms': bedrooms, 'Bathrooms': bathrooms},
-            dark_mode=True
-        )
-        st.plotly_chart(fig, use_container_width=True)
+    # Visualization
+    st.subheader("Visualization")
+    fig = create_3d_scatter(
+        house_data,
+        highlight_point={'Size': size, 'Bedrooms': bedrooms, 'Bathrooms': bathrooms},
+        dark_mode=True
+    )
+    st.plotly_chart(fig, use_container_width=True)
     
-    with col2:
-        st.subheader("Prediction Results")
-        st.metric("Predicted House Price", f"${predicted_price:,.2f}")
-        
-        # Feature importance
-        st.subheader("Feature Importance")
-        importance_fig = create_feature_importance_plot(importance, dark_mode=True)
-        st.plotly_chart(importance_fig, use_container_width=True)
+    # Feature importance
+    st.subheader("Feature Importance")
+    importance_fig = create_feature_importance_plot(importance, dark_mode=True)
+    st.plotly_chart(importance_fig, use_container_width=True)
     
     # Add footer
     st.markdown("---")
