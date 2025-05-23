@@ -7,4 +7,5 @@ pytest==8.0.2
 pytest-cov==4.1.0
 black==24.4.0
 flake8==7.0.0
-isort==5.13.2 
+isort==5.13.2
+setuptools==80.8.0 
