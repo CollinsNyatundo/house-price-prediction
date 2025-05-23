@@ -344,7 +344,7 @@ def main():
     st.markdown(
         "House Price Prediction App | Built with Streamlit | "
         "Data is simulated for demonstration purposes | "
-        "Made with ❤️ by Collins N. Nyagaka"
+        "Made by Collins N. Nyagaka"
     )
 
 if __name__ == "__main__":
