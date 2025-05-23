@@ -9,6 +9,9 @@ from sklearn.linear_model import LinearRegression
 import plotly.express as px
 import plotly.graph_objects as go
 
+# Define exchange rate constant
+KES_EXCHANGE_RATE = 129.25  # 1 USD = 129.25 KES as of today
+
 # Define functions from src modules directly to avoid import issues
 def generate_house_data(n_samples=10000, random_seed=50):
     """Generate synthetic house data for model training and testing."""
@@ -208,6 +211,13 @@ def main():
     # Prediction results
     st.subheader("Prediction Results")
     st.metric("Predicted House Price", f"${predicted_price:,.2f}")
+    
+    # Currency converter
+    show_kes = st.button("Convert to Kenyan Shillings (KES)")
+    if show_kes:
+        kes_price = predicted_price * KES_EXCHANGE_RATE
+        st.metric("Predicted Price in KES", f"KSh {kes_price:,.2f}")
+        st.caption("Exchange rate: $1 = KSh 129.25 (as of today)")
     
     # Visualization
     st.subheader("Visualization")

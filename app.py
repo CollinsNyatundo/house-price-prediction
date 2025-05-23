@@ -16,6 +16,9 @@ from src.utils.logger import setup_logger
 # Set up logger
 logger = setup_logger()
 
+# Define exchange rate constant
+KES_EXCHANGE_RATE = 129.25  # 1 USD = 129.25 KES as of today
+
 def main():
     """Main application function."""
     try:
@@ -84,6 +87,13 @@ def main():
         with col2:
             st.subheader("Prediction Results")
             st.metric("Predicted House Price", f"${predicted_price:,.2f}")
+            
+            # Currency converter
+            show_kes = st.button("Convert to Kenyan Shillings (KES)")
+            if show_kes:
+                kes_price = predicted_price * KES_EXCHANGE_RATE
+                st.metric("Predicted Price in KES", f"KSh {kes_price:,.2f}")
+                st.caption("Exchange rate: $1 = KSh 129.25 (as of today)")
             
             st.subheader("Model Performance")
             st.write(f"Training RMSE: ${metrics['train_rmse']:,.2f}")
