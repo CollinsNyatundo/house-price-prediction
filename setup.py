@@ -12,13 +12,14 @@ with open("requirements.txt", "r", encoding="utf-8") as f:
 setup(
     name="house-price-prediction",
     version="1.0.0",
-    author="Your Name",
+    author="Collins N. Nyagaka",
     author_email="your.email@example.com",
     description="A house price prediction application using machine learning",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/yourusername/house-price-prediction",
+    url="https://github.com/CollinsNyatundo/house-price-prediction",
     packages=find_packages(),
+    include_package_data=True,
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
