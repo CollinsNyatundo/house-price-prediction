@@ -4,7 +4,6 @@
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.45.1-red.svg)](https://streamlit.io)
 [![scikit-learn](https://img.shields.io/badge/scikit--learn-1.6.1-green.svg)](https://scikit-learn.org/)
 [![Docker](https://img.shields.io/badge/Docker-Ready-blue.svg)](https://www.docker.com/)
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 A production-ready web application for predicting house prices based on key features such as square footage, number of bedrooms, and bathrooms. This application uses machine learning (Linear Regression) to provide accurate price estimates and visualizes data in an interactive 3D plot.
 
@@ -32,7 +31,7 @@ A production-ready web application for predicting house prices based on key feat
 1. **Clone this repository**
 
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/CollinsNyatundo/house-price-prediction.git
    cd house-price-prediction
    ```
 
@@ -78,7 +77,7 @@ A production-ready web application for predicting house prices based on key feat
 1. **Clone this repository**
 
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/CollinsNyatundo/house-price-prediction.git
    cd house-price-prediction
    ```
 
@@ -179,9 +178,6 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 6. Push to the branch (`git push origin feature/amazing-feature`)
 7. Open a Pull Request
 
-## 📝 License
-
-This project is open source and available under the [MIT License](LICENSE).
 
 ## 📬 Contact
 
