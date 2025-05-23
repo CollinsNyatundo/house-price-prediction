@@ -58,27 +58,64 @@ def create_3d_scatter(df, highlight_point=None, dark_mode=True):
         title="House Features vs. Price",
         labels={
             "Size": "Size (sq ft)",
-            "Bedrooms": "Number of Bedrooms",
-            "Bathrooms": "Number of Bathrooms",
+            "Bedrooms": "Bedrooms",
+            "Bathrooms": "Bathrooms",
             "Price": "Price ($)"
         }
     )
     
-    # Add custom styling
+    # Add custom styling - Improved for mobile readability
     fig.update_layout(
         coloraxis_colorbar=dict(
             title="Price ($)",
+            title_font=dict(size=16),
+            tickfont=dict(size=14),
             tickprefix="$",
-            tickformat=",.0f"
+            tickformat=",.0f",
+            thickness=25  # Make colorbar thicker
         ),
         paper_bgcolor=bg_color,
         plot_bgcolor=bg_color,
-        font=dict(color=text_color),
+        font=dict(
+            color=text_color,
+            size=16  # Increase base font size
+        ),
+        title=dict(
+            font=dict(size=20)  # Larger title
+        ),
         scene=dict(
-            xaxis=dict(gridcolor=grid_color, showbackground=False),
-            yaxis=dict(gridcolor=grid_color, showbackground=False),
-            zaxis=dict(gridcolor=grid_color, showbackground=False)
-        )
+            xaxis=dict(
+                title=dict(font=dict(size=16)),  # Larger axis title
+                tickfont=dict(size=14),  # Larger tick labels
+                gridcolor=grid_color, 
+                showbackground=False
+            ),
+            yaxis=dict(
+                title=dict(font=dict(size=16)),
+                tickfont=dict(size=14),
+                gridcolor=grid_color, 
+                showbackground=False
+            ),
+            zaxis=dict(
+                title=dict(font=dict(size=16)),
+                tickfont=dict(size=14),
+                gridcolor=grid_color, 
+                showbackground=False
+            ),
+            # Adjust camera angle for better mobile viewing
+            camera=dict(
+                eye=dict(x=1.5, y=1.5, z=1.2)
+            )
+        ),
+        # Make the legend more visible
+        legend=dict(
+            font=dict(size=14),
+            bgcolor="rgba(0,0,0,0.1)" if dark_mode else "rgba(255,255,255,0.5)",
+            bordercolor="rgba(255,255,255,0.2)" if dark_mode else "rgba(0,0,0,0.2)",
+            borderwidth=1
+        ),
+        # Add margin to ensure labels don't get cut off
+        margin=dict(l=10, r=10, t=60, b=10)
     )
     
     # Add highlight point if provided
@@ -90,7 +127,7 @@ def create_3d_scatter(df, highlight_point=None, dark_mode=True):
                 y=[highlight_point['Bedrooms']], 
                 z=[highlight_point['Bathrooms']],
                 mode='markers',
-                marker=dict(size=10, color=marker_color),
+                marker=dict(size=12, color=marker_color),  # Larger marker
                 name="Selected House"
             )
         )
@@ -113,18 +150,39 @@ def create_feature_importance_plot(importance_dict, dark_mode=True):
             y=values,
             text=[f"{v:.2f}" for v in values],
             textposition='auto',
-            marker_color=bar_color
+            marker_color=bar_color,
+            textfont=dict(size=14)  # Larger text on bars
         )
     )
     
     fig.update_layout(
-        title="Feature Importance",
-        xaxis_title="Feature",
-        yaxis_title="Coefficient Value",
+        title=dict(
+            text="Feature Importance",
+            font=dict(size=20)  # Larger title
+        ),
+        xaxis=dict(
+            title=dict(
+                text="Feature",
+                font=dict(size=16)  # Larger axis title
+            ),
+            tickfont=dict(size=14)  # Larger tick labels
+        ),
+        yaxis=dict(
+            title=dict(
+                text="Coefficient Value",
+                font=dict(size=16)
+            ),
+            tickfont=dict(size=14)
+        ),
         template="plotly_dark" if dark_mode else "plotly_white",
         paper_bgcolor=bg_color,
         plot_bgcolor=bg_color,
-        font=dict(color=text_color)
+        font=dict(
+            color=text_color,
+            size=14  # Base font size
+        ),
+        # Add margin to ensure labels don't get cut off
+        margin=dict(l=10, r=10, t=60, b=50)
     )
     
     return fig
@@ -166,6 +224,46 @@ def main():
     # App title and description
     st.title("House Price Prediction")
     st.write("Predict house prices based on features")
+    
+    # Detect if on mobile (approximation based on screen width)
+    is_mobile = False
+    
+    # Add CSS to make UI more responsive
+    st.markdown("""
+    <style>
+    .stApp {
+        max-width: 100%;
+    }
+    
+    /* Improve slider labels on mobile */
+    .st-emotion-cache-1l269u1 p {
+        font-weight: 600 !important;
+        font-size: 1rem !important;
+    }
+    
+    /* Make 3D plot container taller on mobile */
+    @media (max-width: 768px) {
+        [data-testid="stHorizontalBlock"] {
+            flex-direction: column;
+        }
+        
+        .js-plotly-plot, .plot-container {
+            min-height: 400px !important;
+        }
+        
+        /* Increase button size on mobile */
+        .stButton>button {
+            font-size: 1rem;
+            padding: 0.5rem 1rem;
+        }
+        
+        /* Larger text for metric values */
+        [data-testid="stMetricValue"] {
+            font-size: 2rem !important;
+        }
+    }
+    </style>
+    """, unsafe_allow_html=True)
     
     # Sliders at the top of the page
     st.subheader("House Features")
