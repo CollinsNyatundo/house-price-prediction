@@ -9,5 +9,5 @@ black==24.4.0
 flake8==7.0.0
 isort==5.13.2
 setuptools==80.8.0
-pytz==2025.2
-tzlocal==5.2.1 
+pytz
+tzlocal 
