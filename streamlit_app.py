@@ -387,6 +387,11 @@ def main():
         initial_sidebar_state="expanded"
     )
     
+    # Initialize or update prediction timestamp in session state
+    # This ensures the prediction date is updated whenever the app recalculates
+    if 'last_prediction_time' not in st.session_state:
+        st.session_state.last_prediction_time = datetime.now()
+    
     # Force a refresh by adding a hidden element with a random ID
     # This helps ensure state is fresh with each interaction
     random_id = get_random_id()
@@ -405,13 +410,18 @@ def main():
         
         st.markdown("### Input Parameters")
         # Add unique keys to force re-execution when values change
+        # Update the timestamp whenever any slider value changes
+        def update_prediction_time():
+            st.session_state.last_prediction_time = datetime.now()
+        
         size = st.slider(
             "Size (sq ft)", 
             min_value=1000,
             max_value=3500,
             value=2000,
             help="The total interior living space of the house",
-            key="size_slider"
+            key="size_slider",
+            on_change=update_prediction_time
         )
         
         bedrooms = st.slider(
@@ -420,7 +430,8 @@ def main():
             max_value=5,
             value=3,
             help="Number of bedrooms in the house",
-            key="bedrooms_slider"
+            key="bedrooms_slider",
+            on_change=update_prediction_time
         )
         
         bathrooms = st.slider(
@@ -429,7 +440,8 @@ def main():
             max_value=3,
             value=2,
             help="Number of bathrooms in the house",
-            key="bathrooms_slider"
+            key="bathrooms_slider",
+            on_change=update_prediction_time
         )
         
         # Theme selection
@@ -606,6 +618,9 @@ def main():
     prediction = model.predict(input_data)
     predicted_price = prediction[0]
     
+    # Update prediction timestamp whenever a new prediction is made
+    st.session_state.last_prediction_time = datetime.now()
+    
     # Display feature explanations for non-technical users
     display_feature_explanation()
     
@@ -647,21 +662,26 @@ def main():
         else:
             button_label = "Convert to Kenyan Shillings (KES)"
         
-        if st.button(button_label, key="kes_converter"):
+        def toggle_currency_and_update_time():
             st.session_state.show_kes = not st.session_state.show_kes
+            # Also update the prediction time when toggling currency
+            st.session_state.last_prediction_time = datetime.now()
+        
+        if st.button(button_label, key="kes_converter", on_click=toggle_currency_and_update_time):
             st.rerun()  # Using st.rerun() instead of st.experimental_rerun()
             
         if st.session_state.show_kes:
             st.caption(f"Exchange rate: $1 = KSh {KES_EXCHANGE_RATE} (as of today)")
     
     with cols[2]:
-        # Simplify date display to always use system local time
-        now = datetime.now()
+        # Use the timestamp from session state for displaying the prediction date
+        # This ensures the date updates whenever the user changes input values
+        now = st.session_state.last_prediction_time
         current_date = now.strftime("%d %b %Y")
         current_time = now.strftime("%H:%M:%S")
         tz_display = "System local time"
         
-        # Force refresh with a unique key
+        # Force refresh with a unique key to ensure the component updates
         refresh_key = get_random_id()
         
         # Display the prediction date with current time to show it's updating
@@ -681,6 +701,15 @@ def main():
             </div>
         </div>
         """, unsafe_allow_html=True)
+        
+        # Add a refresh button that updates the prediction date
+        def refresh_prediction_time():
+            st.session_state.last_prediction_time = datetime.now()
+        
+        st.button("📅 Refresh Date", 
+                 key=f"refresh_date_{refresh_key}", 
+                 on_click=refresh_prediction_time,
+                 help="Click to update the prediction date to the current time")
         
         model_accuracy = metrics['test_r2'] * 100
         st.markdown(f"**Model Accuracy:**  \n{model_accuracy:.1f}%")
