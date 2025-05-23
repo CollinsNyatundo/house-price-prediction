@@ -76,7 +76,8 @@ def main():
             # Create and display 3D scatter plot
             fig = create_3d_scatter(
                 house_data,
-                highlight_point={'Size': size, 'Bedrooms': bedrooms, 'Bathrooms': bathrooms}
+                highlight_point={'Size': size, 'Bedrooms': bedrooms, 'Bathrooms': bathrooms},
+                dark_mode=True
             )
             st.plotly_chart(fig, use_container_width=True)
         
@@ -92,14 +93,15 @@ def main():
             # Feature importance
             st.subheader("Feature Importance")
             importance = model.get_feature_importance()
-            importance_fig = create_feature_importance_plot(importance)
+            importance_fig = create_feature_importance_plot(importance, dark_mode=True)
             st.plotly_chart(importance_fig, use_container_width=True)
         
         # Add footer
         st.markdown("---")
         st.markdown(
             "House Price Prediction App | Built with Streamlit | "
-            "Data is simulated for demonstration purposes"
+            "Data is simulated for demonstration purposes | "
+            "Made with ❤️ by Collins N. Nyagaka"
         )
         
         logger.info(f"Prediction made: ${predicted_price:,.2f} for house with "

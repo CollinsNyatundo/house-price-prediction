@@ -8,9 +8,10 @@ serverAddress = "localhost"
 gatherUsageStats = false
 
 [theme]
-# Custom theme settings
+# Dark mode theme settings
+base = "dark"
 primaryColor = "#4CAF50"
-backgroundColor = "#FFFFFF"
-secondaryBackgroundColor = "#F0F2F6"
-textColor = "#262730"
+backgroundColor = "#0E1117"
+secondaryBackgroundColor = "#262730"
+textColor = "#FAFAFA"
 font = "sans serif" 
