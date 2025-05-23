@@ -729,15 +729,12 @@ def main():
                     current_date = now_utc.strftime("%d %b %Y")
                     current_time = now_utc.strftime("%H:%M:%S")
                     tz_display = "UTC timezone"
-            
-            timestamp = now_utc.timestamp()
         else:
             # Simple fallback when timezone libraries are not available
             now = datetime.now()
             current_date = now.strftime("%d %b %Y")
             current_time = now.strftime("%H:%M:%S")
             tz_display = "System local time"
-            timestamp = now.timestamp()
         
         # Force refresh with a unique key
         refresh_key = get_random_id()
@@ -759,11 +756,6 @@ def main():
             </div>
         </div>
         """, unsafe_allow_html=True)
-        
-        # Also show the date in regular Streamlit elements to confirm updating
-        # Remove the timestamp display
-        # st.write(" ")  # Add some spacing
-        # st.text(f"Timestamp: {timestamp}")
         
         model_accuracy = metrics['test_r2'] * 100
         st.markdown(f"**Model Accuracy:**  \n{model_accuracy:.1f}%")
