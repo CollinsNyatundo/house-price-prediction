@@ -1,0 +1,16 @@
+[server]
+# The script path is now app.py instead of house_prediction_app.py
+scriptPath = "app.py"
+
+[browser]
+# Auto-open the browser when the server starts
+serverAddress = "localhost"
+gatherUsageStats = false
+
+[theme]
+# Custom theme settings
+primaryColor = "#4CAF50"
+backgroundColor = "#FFFFFF"
+secondaryBackgroundColor = "#F0F2F6"
+textColor = "#262730"
+font = "sans serif" 
