@@ -9,6 +9,13 @@ from sklearn.linear_model import LinearRegression
 import plotly.express as px
 import plotly.graph_objects as go
 from datetime import datetime
+import random
+import string
+
+# Helper function to generate a random ID for forcing Streamlit refreshes
+def get_random_id(length=8):
+    """Generate a random string to use as a unique ID."""
+    return ''.join(random.choices(string.ascii_lowercase + string.digits, k=length))
 
 # Define exchange rate constant
 KES_EXCHANGE_RATE = 129.25  # 1 USD = 129.25 KES as of today
@@ -380,6 +387,11 @@ def main():
         initial_sidebar_state="expanded"
     )
     
+    # Force a refresh by adding a hidden element with a random ID
+    # This helps ensure state is fresh with each interaction
+    random_id = get_random_id()
+    st.markdown(f'<div id="{random_id}" style="display: none;"></div>', unsafe_allow_html=True)
+    
     # Sidebar with app info and inputs
     with st.sidebar:
         st.image("https://img.icons8.com/fluency/96/000000/cottage.png", width=80)
@@ -392,12 +404,14 @@ def main():
         )
         
         st.markdown("### Input Parameters")
+        # Add unique keys to force re-execution when values change
         size = st.slider(
             "Size (sq ft)", 
             min_value=1000,
             max_value=3500,
             value=2000,
-            help="The total interior living space of the house"
+            help="The total interior living space of the house",
+            key="size_slider"
         )
         
         bedrooms = st.slider(
@@ -405,7 +419,8 @@ def main():
             min_value=1,
             max_value=5,
             value=3,
-            help="Number of bedrooms in the house"
+            help="Number of bedrooms in the house",
+            key="bedrooms_slider"
         )
         
         bathrooms = st.slider(
@@ -413,12 +428,13 @@ def main():
             min_value=1,
             max_value=3,
             value=2,
-            help="Number of bathrooms in the house"
+            help="Number of bathrooms in the house",
+            key="bathrooms_slider"
         )
         
         # Theme selection
         st.markdown("### App Settings")
-        dark_mode = st.checkbox("Dark Mode", value=True)
+        dark_mode = st.checkbox("Dark Mode", value=True, key="dark_mode_checkbox")
         
         # Information
         st.markdown("### Data Source")
@@ -572,6 +588,11 @@ def main():
     </div>
     """, unsafe_allow_html=True)
     
+    # Force app to recalculate on every run by adding a random element
+    # This ensures the prediction date stays current
+    current_runtime = datetime.now()
+    st.write(f"<div style='display: none;'>{current_runtime.timestamp()}</div>", unsafe_allow_html=True)
+    
     # Generate data and train model
     house_data = generate_house_data()
     
@@ -584,10 +605,6 @@ def main():
     input_data = pd.DataFrame([[size, bedrooms, bathrooms]], columns=['Size', 'Bedrooms', 'Bathrooms'])
     prediction = model.predict(input_data)
     predicted_price = prediction[0]
-    
-    # Store the current prediction time in session state
-    # This updates each time the app runs or when inputs change
-    st.session_state.prediction_time = datetime.now().strftime("%d %b %Y")
     
     # Display feature explanations for non-technical users
     display_feature_explanation()
@@ -638,14 +655,34 @@ def main():
             st.caption(f"Exchange rate: $1 = KSh {KES_EXCHANGE_RATE} (as of today)")
     
     with cols[2]:
-        # Get current date for prediction display
-        # This will update automatically each time the app runs
-        # Format: day month year (e.g., "23 May 2025")
-        # Using datetime.now() ensures we get the exact current date and time
-        current_date = st.session_state.prediction_time
+        # Force a unique string that changes with every rerun to ensure display refreshes
+        # This approach ensures the date is truly current when displayed
+        # The id parameter ensures the element is unique each time
+        now = datetime.now()
+        current_date = now.strftime("%d %b %Y")
+        current_time = now.strftime("%H:%M:%S")
         
-        # Display the current date from the system, not a hardcoded value
-        st.markdown(f"**Prediction Date:**  \n{current_date}")
+        # Force refresh with a unique key
+        refresh_key = get_random_id()
+        
+        # Display the prediction date with current time to show it's updating
+        # Using a more prominent and colorful style
+        date_color = "#4CAF50" if dark_mode else "#1E88E5"
+        time_color = "#757575" if dark_mode else "#9E9E9E"
+        
+        st.markdown(f"""
+        <div style="background-color: rgba(0,0,0,0.05); padding: 10px; border-radius: 5px; border-left: 4px solid {date_color};">
+            <div style="font-weight: bold; margin-bottom: 5px;">Prediction Date:</div>
+            <div style="font-size: 1.2rem; color: {date_color};">{current_date}</div>
+            <div style="font-size: 0.8rem; color: {time_color}; margin-top: 5px;">
+                Generated at {current_time}
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        # Also show the date in regular Streamlit elements to confirm updating
+        st.write(" ")  # Add some spacing
+        st.text(f"Timestamp: {now.timestamp()}")
         
         model_accuracy = metrics['test_r2'] * 100
         st.markdown(f"**Model Accuracy:**  \n{model_accuracy:.1f}%")
