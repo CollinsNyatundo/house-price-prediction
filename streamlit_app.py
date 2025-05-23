@@ -44,8 +44,8 @@ def create_3d_scatter(df, highlight_point=None, dark_mode=True):
     """Create a 3D scatter plot of house data."""
     # Set color scheme based on theme
     colorscale = "Viridis" if dark_mode else "Turbo"
-    grid_color = "rgba(255, 255, 255, 0.1)" if dark_mode else "rgba(0, 0, 0, 0.1)"
-    bg_color = "rgba(0, 0, 0, 0)" if dark_mode else "rgba(255, 255, 255, 1)"
+    grid_color = "rgba(255, 255, 255, 0.3)" if dark_mode else "rgba(0, 0, 0, 0.3)"
+    bg_color = "rgba(0, 0, 0, 0)" if dark_mode else "rgba(255, 255, 255, 0)"
     text_color = "white" if dark_mode else "black"
     
     fig = px.scatter_3d(
@@ -95,19 +95,31 @@ def create_3d_scatter(df, highlight_point=None, dark_mode=True):
                 title=dict(font=dict(size=16)),  # Larger axis title
                 tickfont=dict(size=14),  # Larger tick labels
                 gridcolor=grid_color, 
-                showbackground=False
+                showbackground=True,
+                backgroundcolor="rgba(0, 0, 0, 0.02)" if not dark_mode else "rgba(0, 0, 0, 0.2)",
+                showline=True,
+                linecolor=grid_color,
+                linewidth=2
             ),
             yaxis=dict(
                 title=dict(font=dict(size=16)),
                 tickfont=dict(size=14),
                 gridcolor=grid_color, 
-                showbackground=False
+                showbackground=True,
+                backgroundcolor="rgba(0, 0, 0, 0.02)" if not dark_mode else "rgba(0, 0, 0, 0.2)",
+                showline=True,
+                linecolor=grid_color,
+                linewidth=2
             ),
             zaxis=dict(
                 title=dict(font=dict(size=16)),
                 tickfont=dict(size=14),
                 gridcolor=grid_color, 
-                showbackground=False
+                showbackground=True,
+                backgroundcolor="rgba(0, 0, 0, 0.02)" if not dark_mode else "rgba(0, 0, 0, 0.2)",
+                showline=True,
+                linecolor=grid_color,
+                linewidth=2
             ),
             # Adjust camera angle for better mobile viewing
             camera=dict(
@@ -117,7 +129,7 @@ def create_3d_scatter(df, highlight_point=None, dark_mode=True):
         # Make the legend more visible
         legend=dict(
             font=dict(size=14),
-            bgcolor="rgba(0,0,0,0.1)" if dark_mode else "rgba(255,255,255,0.5)",
+            bgcolor="rgba(0,0,0,0.1)" if dark_mode else "rgba(255,255,255,0.7)",
             bordercolor="rgba(255,255,255,0.2)" if dark_mode else "rgba(0,0,0,0.2)",
             borderwidth=1
         ),
@@ -147,7 +159,7 @@ def create_feature_importance_plot(importance_dict, dark_mode=True):
     values = list(importance_dict.values())
     
     # Set color scheme based on theme
-    bg_color = "rgba(0, 0, 0, 0)" if dark_mode else "rgba(255, 255, 255, 1)"
+    bg_color = "rgba(0, 0, 0, 0)" if dark_mode else "rgba(255, 255, 255, 0)"
     text_color = "white" if dark_mode else "black"
     
     # Use a gradient color scheme for bars
@@ -168,6 +180,9 @@ def create_feature_importance_plot(importance_dict, dark_mode=True):
             )
         )
     
+    # Add grid lines for better readability in light mode
+    grid_color = "rgba(0, 0, 0, 0.1)" if not dark_mode else "rgba(255, 255, 255, 0.1)"
+    
     fig.update_layout(
         title=dict(
             text="Feature Importance",
@@ -178,14 +193,26 @@ def create_feature_importance_plot(importance_dict, dark_mode=True):
                 text="Feature",
                 font=dict(size=16)  # Larger axis title
             ),
-            tickfont=dict(size=14)  # Larger tick labels
+            tickfont=dict(size=14),  # Larger tick labels
+            showgrid=True,
+            gridcolor=grid_color,
+            gridwidth=1,
+            showline=True,
+            linecolor=grid_color if not dark_mode else "rgba(255, 255, 255, 0.3)",
+            linewidth=2
         ),
         yaxis=dict(
             title=dict(
                 text="Coefficient Value ($)",
                 font=dict(size=16)
             ),
-            tickfont=dict(size=14)
+            tickfont=dict(size=14),
+            showgrid=True,
+            gridcolor=grid_color,
+            gridwidth=1,
+            showline=True,
+            linecolor=grid_color if not dark_mode else "rgba(255, 255, 255, 0.3)",
+            linewidth=2
         ),
         template="plotly_dark" if dark_mode else "plotly_white",
         paper_bgcolor=bg_color,
@@ -202,7 +229,7 @@ def create_feature_importance_plot(importance_dict, dark_mode=True):
 
 def create_price_distribution_plot(df, predicted_price=None, dark_mode=True):
     """Create a histogram of price distribution with prediction marker."""
-    bg_color = "rgba(0, 0, 0, 0)" if dark_mode else "rgba(255, 255, 255, 1)"
+    bg_color = "rgba(0, 0, 0, 0)" if dark_mode else "rgba(255, 255, 255, 0)"
     text_color = "white" if dark_mode else "black"
     marker_color = "#FF5E5E" if dark_mode else "red"
     hist_color = "#4CAF50" if not dark_mode else "#00E676"
@@ -233,6 +260,9 @@ def create_price_distribution_plot(df, predicted_price=None, dark_mode=True):
             annotation_font_color=marker_color
         )
     
+    # Add grid lines for better readability in light mode
+    grid_color = "rgba(0, 0, 0, 0.1)" if not dark_mode else "rgba(255, 255, 255, 0.1)"
+    
     fig.update_layout(
         title=dict(
             text="House Price Distribution",
@@ -245,14 +275,26 @@ def create_price_distribution_plot(df, predicted_price=None, dark_mode=True):
             ),
             tickfont=dict(size=14),
             tickprefix="$",
-            tickformat=",.0f"
+            tickformat=",.0f",
+            showgrid=True,
+            gridcolor=grid_color,
+            gridwidth=1,
+            showline=True,
+            linecolor=grid_color if not dark_mode else "rgba(255, 255, 255, 0.3)",
+            linewidth=2
         ),
         yaxis=dict(
             title=dict(
                 text="Frequency",
                 font=dict(size=16)
             ),
-            tickfont=dict(size=14)
+            tickfont=dict(size=14),
+            showgrid=True,
+            gridcolor=grid_color,
+            gridwidth=1,
+            showline=True,
+            linecolor=grid_color if not dark_mode else "rgba(255, 255, 255, 0.3)",
+            linewidth=2
         ),
         template="plotly_dark" if dark_mode else "plotly_white",
         paper_bgcolor=bg_color,
@@ -338,99 +380,6 @@ def main():
         initial_sidebar_state="expanded"
     )
     
-    # Add custom CSS for styling
-    st.markdown("""
-    <style>
-    .stApp {
-        max-width: 100%;
-    }
-    
-    /* Custom card styling */
-    .custom-card {
-        background-color: rgba(255, 255, 255, 0.1);
-        border-radius: 10px;
-        padding: 20px;
-        margin-bottom: 20px;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-    }
-    
-    /* Colored headings */
-    .green-heading {
-        color: #4CAF50;
-        font-size: 1.5rem;
-        margin-bottom: 10px;
-    }
-    
-    .blue-heading {
-        color: #2196F3;
-        font-size: 1.5rem;
-        margin-bottom: 10px;
-    }
-    
-    .orange-heading {
-        color: #FF9800;
-        font-size: 1.5rem;
-        margin-bottom: 10px;
-    }
-    
-    /* Styled metrics */
-    .metric-container {
-        background-color: rgba(33, 150, 243, 0.1);
-        border-radius: 10px;
-        padding: 15px;
-        margin-bottom: 15px;
-        border-left: 5px solid #2196F3;
-    }
-    
-    .metric-title {
-        font-size: 1rem;
-        color: #90CAF9;
-        margin-bottom: 5px;
-    }
-    
-    .metric-value {
-        font-size: 1.8rem;
-        font-weight: bold;
-        color: white;
-    }
-    
-    /* Separator line */
-    .separator {
-        height: 1px;
-        background: linear-gradient(to right, rgba(255,255,255,0), rgba(255,255,255,0.5), rgba(255,255,255,0));
-        margin: 30px 0;
-    }
-    
-    /* Improve slider labels on mobile */
-    .st-emotion-cache-1l269u1 p {
-        font-weight: 600 !important;
-        font-size: 1rem !important;
-    }
-    
-    /* Make 3D plot container taller on mobile */
-    @media (max-width: 768px) {
-        [data-testid="stHorizontalBlock"] {
-            flex-direction: column;
-        }
-        
-        .js-plotly-plot, .plot-container {
-            min-height: 400px !important;
-        }
-        
-        /* Increase button size on mobile */
-        .stButton>button {
-            font-size: 1rem;
-            padding: 0.5rem 1rem;
-        }
-        
-        /* Larger text for metric values */
-        [data-testid="stMetricValue"] {
-            font-size: 2rem !important;
-        }
-    }
-    </style>
-    """, unsafe_allow_html=True)
-    
     # Sidebar with app info and inputs
     with st.sidebar:
         st.image("https://img.icons8.com/fluency/96/000000/cottage.png", width=80)
@@ -477,11 +426,147 @@ def main():
             "This app uses simulated data for demonstration purposes. "
             "The model is trained on 10,000 synthetic house samples."
         )
+    
+    # Add custom CSS for styling - based on chosen theme
+    if dark_mode:
+        # Dark mode styles
+        card_bg = "rgba(255, 255, 255, 0.1)"
+        card_border = "rgba(255, 255, 255, 0.2)"
+        separator_gradient = "linear-gradient(to right, rgba(255,255,255,0), rgba(255,255,255,0.5), rgba(255,255,255,0))"
+        metric_bg = "rgba(33, 150, 243, 0.1)"
+        metric_title_color = "#90CAF9"
+        metric_value_color = "white"
+        text_color = "white"
+        footer_bg = "rgba(255, 255, 255, 0.05)"
+        footer_text = "rgba(255, 255, 255, 0.7)"
+        header_gradient = "linear-gradient(to right, #4CAF50, #2196F3)"
+    else:
+        # Light mode styles
+        card_bg = "rgba(0, 0, 0, 0.03)"
+        card_border = "rgba(0, 0, 0, 0.1)"
+        separator_gradient = "linear-gradient(to right, rgba(0,0,0,0), rgba(0,0,0,0.2), rgba(0,0,0,0))"
+        metric_bg = "rgba(33, 150, 243, 0.05)"
+        metric_title_color = "#1565C0"
+        metric_value_color = "#212121"
+        text_color = "#212121"
+        footer_bg = "rgba(0, 0, 0, 0.03)"
+        footer_text = "rgba(0, 0, 0, 0.7)"
+        header_gradient = "linear-gradient(to right, #4CAF50, #2196F3)"
+    
+    # Apply theme using CSS
+    st.markdown(f"""
+    <style>
+    .stApp {{
+        max-width: 100%;
+        color: {text_color};
+    }}
+    
+    /* Custom card styling */
+    .custom-card {{
+        background-color: {card_bg};
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px;
+        border: 1px solid {card_border};
+    }}
+    
+    /* Colored headings */
+    .green-heading {{
+        color: {'#4CAF50' if dark_mode else '#2E7D32'};
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+    }}
+    
+    .blue-heading {{
+        color: {'#2196F3' if dark_mode else '#1565C0'};
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+    }}
+    
+    .orange-heading {{
+        color: {'#FF9800' if dark_mode else '#E65100'};
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+    }}
+    
+    /* Styled metrics */
+    .metric-container {{
+        background-color: {metric_bg};
+        border-radius: 10px;
+        padding: 15px;
+        margin-bottom: 15px;
+        border-left: 5px solid {'#2196F3' if dark_mode else '#1565C0'};
+    }}
+    
+    .metric-title {{
+        font-size: 1rem;
+        color: {metric_title_color};
+        margin-bottom: 5px;
+    }}
+    
+    .metric-value {{
+        font-size: 1.8rem;
+        font-weight: bold;
+        color: {metric_value_color};
+    }}
+    
+    /* Separator line */
+    .separator {{
+        height: 1px;
+        background: {separator_gradient};
+        margin: 30px 0;
+    }}
+    
+    /* Improve slider labels on mobile */
+    .st-emotion-cache-1l269u1 p {{
+        font-weight: 600 !important;
+        font-size: 1rem !important;
+    }}
+    
+    /* Make 3D plot container taller on mobile */
+    @media (max-width: 768px) {{
+        [data-testid="stHorizontalBlock"] {{
+            flex-direction: column;
+        }}
         
+        .js-plotly-plot, .plot-container {{
+            min-height: 400px !important;
+        }}
+        
+        /* Increase button size on mobile */
+        .stButton>button {{
+            font-size: 1rem;
+            padding: 0.5rem 1rem;
+        }}
+        
+        /* Larger text for metric values */
+        [data-testid="stMetricValue"] {{
+            font-size: 2rem !important;
+        }}
+    }}
+    
+    /* Adjust expander styling based on theme */
+    .streamlit-expanderHeader {{
+        background-color: {card_bg} !important;
+        border: 1px solid {card_border} !important;
+    }}
+    
+    /* Fix tabs to match theme */
+    .stTabs [data-baseweb="tab-list"] {{
+        background-color: {card_bg};
+        border-radius: 8px;
+    }}
+    
+    .stTabs [data-baseweb="tab"] {{
+        color: {text_color};
+    }}
+    </style>
+    """, unsafe_allow_html=True)
+    
     # Main content area
     # App header with animated gradient (using custom HTML)
-    st.markdown("""
-    <div style="background: linear-gradient(to right, #4CAF50, #2196F3); padding: 1.5rem; border-radius: 10px; margin-bottom: 1rem;">
+    st.markdown(f"""
+    <div style="background: {header_gradient}; padding: 1.5rem; border-radius: 10px; margin-bottom: 1rem;">
         <h1 style="color: white; margin:0; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">🏠 House Price Predictor</h1>
         <p style="color: white; margin-top: 0.5rem; font-size: 1.1rem;">Interactive tool for real estate price estimation</p>
     </div>
@@ -512,7 +597,7 @@ def main():
     cols = st.columns([2, 2, 1])
     
     with cols[0]:
-        st.markdown("""
+        st.markdown(f"""
         <div class="metric-container">
             <div class="metric-title">Predicted House Price (USD)</div>
             <div class="metric-value">$""" + f"{predicted_price:,.2f}" + """</div>
@@ -531,8 +616,8 @@ def main():
         kes_price = predicted_price * KES_EXCHANGE_RATE
         
         if st.session_state.show_kes:
-            st.markdown("""
-            <div class="metric-container" style="border-left: 5px solid #FF9800;">
+            st.markdown(f"""
+            <div class="metric-container" style="border-left: 5px solid {'#FF9800' if dark_mode else '#E65100'};">
                 <div class="metric-title">Predicted Price (KES)</div>
                 <div class="metric-value">KSh """ + f"{kes_price:,.2f}" + """</div>
             </div>
@@ -652,14 +737,14 @@ def main():
     st.markdown('<div class="separator"></div>', unsafe_allow_html=True)
     
     # Enhanced footer with more information
-    st.markdown("""
-    <div style="background-color: rgba(255, 255, 255, 0.05); padding: 15px; border-radius: 10px; text-align: center;">
+    st.markdown(f"""
+    <div style="background-color: {footer_bg}; padding: 15px; border-radius: 10px; text-align: center;">
         <div style="margin-bottom: 10px;">
             <span style="font-weight: bold;">House Price Prediction App</span> | 
             <span>Built with Streamlit & Python</span> | 
             <span>Data is simulated for demonstration</span>
         </div>
-        <div style="font-size: 0.8rem; color: rgba(255, 255, 255, 0.7);">
+        <div style="font-size: 0.8rem; color: {footer_text};">
             Made by Collins N. Nyagaka | Last Updated: May 2025
         </div>
     </div>
