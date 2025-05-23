@@ -634,6 +634,9 @@ def main():
             st.caption(f"Exchange rate: $1 = KSh {KES_EXCHANGE_RATE} (as of today)")
     
     with cols[2]:
+        # Get current date for prediction display
+        # This will update automatically each time the app runs
+        # Format: day month year (e.g., "23 May 2025")
         current_date = datetime.now().strftime("%d %b %Y")
         st.markdown(f"**Prediction Date:**  \n{current_date}")
         
@@ -745,7 +748,7 @@ def main():
             <span>Data is simulated for demonstration</span>
         </div>
         <div style="font-size: 0.8rem; color: {footer_text};">
-            Made by Collins N. Nyagaka | Last Updated: May 2025
+            Made by Collins N. Nyagaka | Last Updated: May 2025 | Uses real-time date for predictions
         </div>
     </div>
     """, unsafe_allow_html=True)
