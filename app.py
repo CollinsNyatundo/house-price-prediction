@@ -29,6 +29,43 @@ def main():
             layout="wide"
         )
         
+        # Add CSS for mobile optimization
+        st.markdown("""
+        <style>
+        .stApp {
+            max-width: 100%;
+        }
+        
+        /* Improve slider labels on mobile */
+        .st-emotion-cache-1l269u1 p {
+            font-weight: 600 !important;
+            font-size: 1rem !important;
+        }
+        
+        /* Make 3D plot container taller on mobile */
+        @media (max-width: 768px) {
+            [data-testid="stHorizontalBlock"] {
+                flex-direction: column;
+            }
+            
+            .js-plotly-plot, .plot-container {
+                min-height: 400px !important;
+            }
+            
+            /* Increase button size on mobile */
+            .stButton>button {
+                font-size: 1rem;
+                padding: 0.5rem 1rem;
+            }
+            
+            /* Larger text for metric values */
+            [data-testid="stMetricValue"] {
+                font-size: 2rem !important;
+            }
+        }
+        </style>
+        """, unsafe_allow_html=True)
+        
         # App title and description
         st.title(APP_CONFIG["title"])
         st.write(APP_CONFIG["description"])
@@ -119,7 +156,7 @@ def main():
         st.markdown(
             "House Price Prediction App | Built with Streamlit | "
             "Data is simulated for demonstration purposes | "
-            "Made with ❤️ by Collins N. Nyagaka"
+            "Made by Collins N. Nyagaka"
         )
         
         logger.info(f"Prediction made: ${predicted_price:,.2f} for house with "
