@@ -78,7 +78,7 @@ A production-ready web application for predicting house prices based on key feat
 1. **Clone this repository**
 
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/CollinsNyatundo/house-price-prediction.git
    cd house-price-prediction
    ```
 
