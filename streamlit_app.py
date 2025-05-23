@@ -11,6 +11,8 @@ import plotly.graph_objects as go
 from datetime import datetime
 import random
 import string
+import pytz
+from tzlocal import get_localzone
 
 # Helper function to generate a random ID for forcing Streamlit refreshes
 def get_random_id(length=8):
@@ -436,6 +438,16 @@ def main():
         st.markdown("### App Settings")
         dark_mode = st.checkbox("Dark Mode", value=True, key="dark_mode_checkbox")
         
+        st.markdown("### Date & Time")
+        timezone_options = ["Auto-detect (Local)", "UTC", "EST (UTC-5)", "CST (UTC-6)", "PST (UTC-8)", "EAT (UTC+3)", "IST (UTC+5:30)"]
+        selected_timezone = st.selectbox(
+            "Timezone for Predictions", 
+            options=timezone_options,
+            index=0,
+            help="Select which timezone to use for prediction dates",
+            key="timezone_selector"
+        )
+        
         # Information
         st.markdown("### Data Source")
         st.caption(
@@ -657,10 +669,52 @@ def main():
     with cols[2]:
         # Force a unique string that changes with every rerun to ensure display refreshes
         # This approach ensures the date is truly current when displayed
-        # The id parameter ensures the element is unique each time
-        now = datetime.now()
-        current_date = now.strftime("%d %b %Y")
-        current_time = now.strftime("%H:%M:%S")
+        now_utc = datetime.now(pytz.UTC)  # Get current UTC time
+        
+        # Process the timezone selection
+        if selected_timezone == "Auto-detect (Local)":
+            try:
+                local_tz = get_localzone()
+                tz_name = str(local_tz).split('/')[-1].replace('_', ' ')
+                now_local = now_utc.astimezone(local_tz)
+                current_date = now_local.strftime("%d %b %Y")
+                current_time = now_local.strftime("%H:%M:%S")
+                tz_offset = now_local.strftime('%z')
+                tz_display = f"Local: {tz_name} (UTC{tz_offset})"
+            except Exception:
+                # Fallback to UTC if timezone detection fails
+                current_date = now_utc.strftime("%d %b %Y")
+                current_time = now_utc.strftime("%H:%M:%S")
+                tz_display = "UTC timezone"
+        elif selected_timezone == "UTC":
+            current_date = now_utc.strftime("%d %b %Y")
+            current_time = now_utc.strftime("%H:%M:%S")
+            tz_display = "UTC timezone"
+        else:
+            # Extract timezone info from the selection
+            tz_code = selected_timezone.split(' ')[0]
+            tz_offset = selected_timezone.split('(')[1].split(')')[0]
+            
+            # Handle common timezone codes
+            tz_map = {
+                "EST": "America/New_York",
+                "CST": "America/Chicago",
+                "PST": "America/Los_Angeles",
+                "EAT": "Africa/Nairobi",
+                "IST": "Asia/Kolkata"
+            }
+            
+            try:
+                selected_tz = pytz.timezone(tz_map.get(tz_code, "UTC"))
+                now_local = now_utc.astimezone(selected_tz)
+                current_date = now_local.strftime("%d %b %Y")
+                current_time = now_local.strftime("%H:%M:%S")
+                tz_display = f"{tz_code} timezone {tz_offset}"
+            except Exception:
+                # Fallback to UTC
+                current_date = now_utc.strftime("%d %b %Y")
+                current_time = now_utc.strftime("%H:%M:%S")
+                tz_display = "UTC timezone"
         
         # Force refresh with a unique key
         refresh_key = get_random_id()
@@ -677,12 +731,15 @@ def main():
             <div style="font-size: 0.8rem; color: {time_color}; margin-top: 5px;">
                 Generated at {current_time}
             </div>
+            <div style="font-size: 0.75rem; color: {time_color}; margin-top: 3px;">
+                Timezone: {tz_display}
+            </div>
         </div>
         """, unsafe_allow_html=True)
         
         # Also show the date in regular Streamlit elements to confirm updating
         st.write(" ")  # Add some spacing
-        st.text(f"Timestamp: {now.timestamp()}")
+        st.text(f"Timestamp: {now_utc.timestamp()}")
         
         model_accuracy = metrics['test_r2'] * 100
         st.markdown(f"**Model Accuracy:**  \n{model_accuracy:.1f}%")
