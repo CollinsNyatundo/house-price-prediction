@@ -585,6 +585,10 @@ def main():
     prediction = model.predict(input_data)
     predicted_price = prediction[0]
     
+    # Store the current prediction time in session state
+    # This updates each time the app runs or when inputs change
+    st.session_state.prediction_time = datetime.now().strftime("%d %b %Y")
+    
     # Display feature explanations for non-technical users
     display_feature_explanation()
     
@@ -637,7 +641,10 @@ def main():
         # Get current date for prediction display
         # This will update automatically each time the app runs
         # Format: day month year (e.g., "23 May 2025")
-        current_date = datetime.now().strftime("%d %b %Y")
+        # Using datetime.now() ensures we get the exact current date and time
+        current_date = st.session_state.prediction_time
+        
+        # Display the current date from the system, not a hardcoded value
         st.markdown(f"**Prediction Date:**  \n{current_date}")
         
         model_accuracy = metrics['test_r2'] * 100
