@@ -101,7 +101,7 @@ A production-ready web application for predicting house prices based on key feat
 
 ## 📁 Project Structure
 
-```
+```text
 house-price-prediction/
 ├── src/                    # Source code package
 │   ├── config/             # Configuration settings
@@ -184,4 +184,4 @@ This project is open source and available under the [MIT License](LICENSE).
 
 ## 📬 Contact
 
-For questions or feedback about this application, please open an issue in the repository. 
+For questions or feedback about this application, please open an issue in the repository.
