@@ -12,14 +12,6 @@ from datetime import datetime
 import random
 import string
 
-# Try to import timezone libraries, with fallbacks if not available
-try:
-    import pytz
-    from tzlocal import get_localzone
-    TIMEZONE_SUPPORT = True
-except ImportError:
-    TIMEZONE_SUPPORT = False
-
 # Helper function to generate a random ID for forcing Streamlit refreshes
 def get_random_id(length=8):
     """Generate a random string to use as a unique ID."""
@@ -444,21 +436,6 @@ def main():
         st.markdown("### App Settings")
         dark_mode = st.checkbox("Dark Mode", value=True, key="dark_mode_checkbox")
         
-        # Only show timezone options if timezone support is available
-        if TIMEZONE_SUPPORT:
-            st.markdown("### Date & Time")
-            timezone_options = ["Auto-detect (Local)", "UTC", "EST (UTC-5)", "CST (UTC-6)", "PST (UTC-8)", "EAT (UTC+3)", "IST (UTC+5:30)"]
-            selected_timezone = st.selectbox(
-                "Timezone for Predictions", 
-                options=timezone_options,
-                index=0,
-                help="Select which timezone to use for prediction dates",
-                key="timezone_selector"
-            )
-        else:
-            # If timezone support is not available, set a default value
-            selected_timezone = "UTC"
-        
         # Information
         st.markdown("### Data Source")
         st.caption(
@@ -678,63 +655,11 @@ def main():
             st.caption(f"Exchange rate: $1 = KSh {KES_EXCHANGE_RATE} (as of today)")
     
     with cols[2]:
-        # Handle date display based on timezone support availability
-        if TIMEZONE_SUPPORT:
-            now_utc = datetime.now(pytz.UTC)  # Get current UTC time
-            
-            # Process the timezone selection
-            if selected_timezone == "Auto-detect (Local)":
-                try:
-                    local_tz = get_localzone()
-                    # Ensure compatibility with older tzlocal versions
-                    if isinstance(local_tz, str):
-                        local_tz = pytz.timezone(local_tz)
-                    tz_name = str(local_tz).split('/')[-1].replace('_', ' ')
-                    now_local = now_utc.astimezone(local_tz)
-                    current_date = now_local.strftime("%d %b %Y")
-                    current_time = now_local.strftime("%H:%M:%S")
-                    tz_offset = now_local.strftime('%z')
-                    tz_display = f"Local: {tz_name} (UTC{tz_offset})"
-                except Exception as e:
-                    # Fallback to UTC if timezone detection fails
-                    current_date = now_utc.strftime("%d %b %Y")
-                    current_time = now_utc.strftime("%H:%M:%S")
-                    tz_display = "UTC timezone"
-            elif selected_timezone == "UTC":
-                current_date = now_utc.strftime("%d %b %Y")
-                current_time = now_utc.strftime("%H:%M:%S")
-                tz_display = "UTC timezone"
-            else:
-                # Extract timezone info from the selection
-                tz_code = selected_timezone.split(' ')[0]
-                tz_offset = selected_timezone.split('(')[1].split(')')[0]
-                
-                # Handle common timezone codes
-                tz_map = {
-                    "EST": "America/New_York",
-                    "CST": "America/Chicago",
-                    "PST": "America/Los_Angeles",
-                    "EAT": "Africa/Nairobi",
-                    "IST": "Asia/Kolkata"
-                }
-                
-                try:
-                    selected_tz = pytz.timezone(tz_map.get(tz_code, "UTC"))
-                    now_local = now_utc.astimezone(selected_tz)
-                    current_date = now_local.strftime("%d %b %Y")
-                    current_time = now_local.strftime("%H:%M:%S")
-                    tz_display = f"{tz_code} timezone {tz_offset}"
-                except Exception:
-                    # Fallback to UTC
-                    current_date = now_utc.strftime("%d %b %Y")
-                    current_time = now_utc.strftime("%H:%M:%S")
-                    tz_display = "UTC timezone"
-        else:
-            # Simple fallback when timezone libraries are not available
-            now = datetime.now()
-            current_date = now.strftime("%d %b %Y")
-            current_time = now.strftime("%H:%M:%S")
-            tz_display = "System local time"
+        # Simplify date display to always use system local time
+        now = datetime.now()
+        current_date = now.strftime("%d %b %Y")
+        current_time = now.strftime("%H:%M:%S")
+        tz_display = "System local time"
         
         # Force refresh with a unique key
         refresh_key = get_random_id()
