@@ -8,7 +8,7 @@
 
 A production-ready web application for predicting house prices based on key features such as square footage, number of bedrooms, and bathrooms. This application uses machine learning (Linear Regression) to provide accurate price estimates and visualizes data in an interactive 3D plot.
 
-![App Screenshot](https://via.placeholder.com/800x400?text=House+Price+Prediction+App)
+![App Screenshot](images/app-screenshot.png)
 
 ## 📋 Features
 
@@ -110,6 +110,7 @@ house-price-prediction/
 │   ├── utils/              # Utility functions and helpers
 │   └── visualization/      # Data visualization components
 ├── tests/                  # Test suite
+├── images/                 # Application screenshots and images
 ├── app.py                  # Main Streamlit application
 ├── Dockerfile              # Docker configuration
 ├── docker-compose.yml      # Docker Compose configuration
