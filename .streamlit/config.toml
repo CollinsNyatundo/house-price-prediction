@@ -1,6 +1,5 @@
 [browser]
-# Auto-open the browser when the server starts
-serverAddress = "localhost"
+# Removed serverAddress to allow cloud deployment
 gatherUsageStats = false
 
 [theme]
@@ -10,4 +9,9 @@ primaryColor = "#4CAF50"
 backgroundColor = "#0E1117"
 secondaryBackgroundColor = "#262730"
 textColor = "#FAFAFA"
-font = "sans serif" 
+font = "sans serif"
+
+[server]
+enableStaticServing = true
+enableCORS = false
+enableXsrfProtection = false 

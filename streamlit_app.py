@@ -212,9 +212,17 @@ def main():
     st.subheader("Prediction Results")
     st.metric("Predicted House Price", f"${predicted_price:,.2f}")
     
-    # Currency converter
-    show_kes = st.button("Convert to Kenyan Shillings (KES)")
-    if show_kes:
+    # Currency converter (more reliable implementation)
+    st.write("---")
+    st.write("**Currency Conversion**")
+    
+    if 'show_kes' not in st.session_state:
+        st.session_state.show_kes = False
+        
+    if st.button("Convert to Kenyan Shillings (KES)", key="kes_converter"):
+        st.session_state.show_kes = not st.session_state.show_kes
+        
+    if st.session_state.show_kes:
         kes_price = predicted_price * KES_EXCHANGE_RATE
         st.metric("Predicted Price in KES", f"KSh {kes_price:,.2f}")
         st.caption("Exchange rate: $1 = KSh 129.25 (as of today)")
