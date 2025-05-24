@@ -11,6 +11,7 @@ import plotly.graph_objects as go
 from datetime import datetime
 import random
 import string
+from streamlit.components.v1 import html
 
 # Helper function to generate a random ID for forcing Streamlit refreshes
 def get_random_id(length=8):
@@ -666,9 +667,11 @@ def main():
             st.session_state.show_kes = not st.session_state.show_kes
             # Also update the prediction time when toggling currency
             st.session_state.last_prediction_time = datetime.now()
+            st.rerun()  # Add rerun to force refreshing the app when toggling currency
         
         if st.button(button_label, key="kes_converter", on_click=toggle_currency_and_update_time):
-            st.rerun()  # Using st.rerun() instead of st.experimental_rerun()
+            # Removed st.rerun() since it's now called in the callback function
+            pass
             
         if st.session_state.show_kes:
             st.caption(f"Exchange rate: $1 = KSh {KES_EXCHANGE_RATE} (as of today)")
@@ -689,28 +692,35 @@ def main():
         date_color = "#4CAF50" if dark_mode else "#1E88E5"
         time_color = "#757575" if dark_mode else "#9E9E9E"
         
-        st.markdown(f"""
-        <div style="background-color: rgba(0,0,0,0.05); padding: 10px; border-radius: 5px; border-left: 4px solid {date_color};">
-            <div style="font-weight: bold; margin-bottom: 5px;">Prediction Date:</div>
-            <div style="font-size: 1.2rem; color: {date_color};">{current_date}</div>
-            <div style="font-size: 0.8rem; color: {time_color}; margin-top: 5px;">
-                Generated at {current_time}
+        # Use the simplest and most compatible approach
+        st.markdown("<div style='height: 10px;'></div>", unsafe_allow_html=True)
+        
+        # Create a simple date display with strong visual styling
+        date_display = f"""
+        <div style="background-color: rgba(0,0,0,0.05); padding: 15px; border-radius: 5px; 
+                    border-left: 4px solid {date_color}; margin-bottom: 10px;">
+            <div style="font-weight: bold; font-size: 0.9rem; margin-bottom: 8px;">Prediction Date:</div>
+            <div style="font-size: 1.2rem; color: {date_color}; font-weight: bold;">
+                {now.strftime("%d %b %Y")}
             </div>
-            <div style="font-size: 0.75rem; color: {time_color}; margin-top: 3px;">
-                Timezone: {tz_display}
+            <div style="font-size: 0.9rem; color: {time_color}; margin-top: 5px;">
+                Generated at {now.strftime("%H:%M:%S")}
+            </div>
+            <div style="font-size: 0.75rem; color: {time_color}; margin-top: 5px;">
+                Click refresh button to update
             </div>
         </div>
-        """, unsafe_allow_html=True)
+        """
         
-        # Add a refresh button that updates the prediction date
-        def refresh_prediction_time():
-            st.session_state.last_prediction_time = datetime.now()
+        st.markdown(date_display, unsafe_allow_html=True)
         
-        st.button("📅 Refresh Date", 
-                 key=f"refresh_date_{refresh_key}", 
-                 on_click=refresh_prediction_time,
-                 help="Click to update the prediction date to the current time")
-        
+        # Add a bold, colorful refresh button
+        if st.button("🔄 Update Date & Time", 
+                   key=f"refresh_date_{refresh_key}",
+                   help="Click to update the prediction date and time to current moment"):
+            st.rerun()
+            
+        # Display accuracy underneath
         model_accuracy = metrics['test_r2'] * 100
         st.markdown(f"**Model Accuracy:**  \n{model_accuracy:.1f}%")
     
@@ -819,7 +829,7 @@ def main():
             <span>Data is simulated for demonstration</span>
         </div>
         <div style="font-size: 0.8rem; color: {footer_text};">
-            Made by Collins N. Nyagaka | Last Updated: May 2025 | Uses real-time date for predictions
+            Made by Collins N. Nyagaka | Last Updated: May 2025 | Uses system local time for prediction timestamps
         </div>
     </div>
     """, unsafe_allow_html=True)
