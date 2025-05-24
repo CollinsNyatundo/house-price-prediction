@@ -9,7 +9,7 @@ A production-ready web application for predicting house prices based on key feat
 
 ### 🏠 App Interface
 ![App Screenshot](images/app-screenshot.png)
-*Interactive machine learning dashboard featuring an immersive 3D visualization, dynamic parameter controls, and instant USD/KES price estimates.*
+*Interactive dashboard for predicting house prices featuring an immersive 3D visualization, dynamic parameter controls, and instant USD/KES price estimates.*
 
 ## 📋 Features
 
