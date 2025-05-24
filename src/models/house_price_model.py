@@ -44,10 +44,21 @@ class HousePriceModel:
         dict
             Dictionary containing model performance metrics
         """
+        # Input validation
+        if test_size <= 0 or test_size >= 1:
+            raise ValueError("test_size must be between 0 and 1")
+            
         # Convert to DataFrame if not already to ensure feature names
         if not isinstance(X, pd.DataFrame):
             X = pd.DataFrame(X, columns=self.feature_names)
             
+        # Additional validation for feature values
+        for feature in self.feature_names:
+            if X[feature].isnull().any():
+                raise ValueError(f"Feature '{feature}' contains null values")
+            if not np.issubdtype(X[feature].dtype, np.number):
+                raise ValueError(f"Feature '{feature}' must contain numeric values")
+                
         # Split data
         X_train, X_test, y_train, y_test = train_test_split(
             X, y, test_size=test_size, random_state=self.random_state
@@ -91,6 +102,23 @@ class HousePriceModel:
         # Convert to DataFrame if not already to ensure feature names
         if not isinstance(X, pd.DataFrame):
             X = pd.DataFrame(X, columns=self.feature_names)
+            
+        # Validate input data
+        for feature in self.feature_names:
+            if feature not in X.columns:
+                raise ValueError(f"Missing required feature: {feature}")
+            if X[feature].isnull().any():
+                raise ValueError(f"Feature '{feature}' contains null values")
+            if not np.issubdtype(X[feature].dtype, np.number):
+                raise ValueError(f"Feature '{feature}' must contain numeric values")
+                
+        # Apply reasonable bounds checking
+        if (X['Size'] < 100).any() or (X['Size'] > 10000).any():
+            raise ValueError("Size must be between 100 and 10000 sq ft")
+        if (X['Bedrooms'] < 1).any() or (X['Bedrooms'] > 10).any():
+            raise ValueError("Bedrooms must be between 1 and 10")
+        if (X['Bathrooms'] < 1).any() or (X['Bathrooms'] > 10).any():
+            raise ValueError("Bathrooms must be between 1 and 10")
             
         return self.model.predict(X)
     

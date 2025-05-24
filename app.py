@@ -6,12 +6,16 @@ such as size, number of bedrooms, and bathrooms using a linear regression model.
 """
 import streamlit as st
 import logging
+import hashlib
+import socket
 
 from src.data.data_generator import generate_house_data
 from src.models.house_price_model import HousePriceModel
 from src.visualization.visualize import create_3d_scatter, create_feature_importance_plot
 from src.config.config import APP_CONFIG
+from src.config.security_config import get_all_security_headers
 from src.utils.logger import setup_logger
+from src.utils.security_middleware import secure_endpoint, sanitize_input
 
 # Set up logger
 logger = setup_logger()
@@ -19,6 +23,21 @@ logger = setup_logger()
 # Define exchange rate constant
 KES_EXCHANGE_RATE = 129.25  # 1 USD = 129.25 KES as of today
 
+# Add security headers
+def add_security_headers():
+    """Add security headers to the Streamlit app."""
+    # Get security headers from configuration
+    headers = get_all_security_headers()
+    
+    # Add headers to the HTML
+    headers_html = ""
+    for header, value in headers.items():
+        headers_html += f'<meta http-equiv="{header}" content="{value}">\n'
+    
+    # Inject headers into the page
+    st.markdown(headers_html, unsafe_allow_html=True)
+
+@secure_endpoint
 def main():
     """Main application function."""
     try:
@@ -29,7 +48,14 @@ def main():
             layout="wide"
         )
         
-        # Add CSS for mobile optimization
+        # Initialize session state
+        if 'session_id' not in st.session_state:
+            st.session_state.session_id = hashlib.md5(str(id(st.session_state)).encode()).hexdigest()
+        
+        # Add security headers
+        add_security_headers()
+        
+        # Add CSS using safer approach with st.markdown and <style> tags
         st.markdown("""
         <style>
         .stApp {
@@ -64,11 +90,11 @@ def main():
             }
         }
         </style>
-        """, unsafe_allow_html=True)
+        """)
         
         # App title and description
         st.title(APP_CONFIG["title"])
-        st.write(APP_CONFIG["description"])
+        st.write(sanitize_input(APP_CONFIG["description"]))
         
         # Sidebar for inputs
         st.sidebar.header("House Features")
@@ -93,6 +119,19 @@ def main():
             max_value=APP_CONFIG["bathrooms_range"][1],
             value=APP_CONFIG["default_bathrooms"]
         )
+        
+        # Validate inputs
+        if size < 100 or size > 10000:
+            st.error("Size must be between 100 and 10000 sq ft")
+            return
+            
+        if bedrooms < 1 or bedrooms > 10:
+            st.error("Bedrooms must be between 1 and 10")
+            return
+            
+        if bathrooms < 1 or bathrooms > 10:
+            st.error("Bathrooms must be between 1 and 10")
+            return
         
         # Generate data and train model
         logger.info("Generating house data and training model")
@@ -154,9 +193,11 @@ def main():
         # Add footer
         st.markdown("---")
         st.markdown(
-            "House Price Prediction App | Built with Streamlit | "
-            "Data is simulated for demonstration purposes | "
-            "Made by Collins N. Nyagaka"
+            sanitize_input(
+                "House Price Prediction App | Built with Streamlit | "
+                "Data is simulated for demonstration purposes | "
+                "Made by Collins N. Nyagaka"
+            )
         )
         
         logger.info(f"Prediction made: ${predicted_price:,.2f} for house with "
