@@ -667,11 +667,10 @@ def main():
             st.session_state.show_kes = not st.session_state.show_kes
             # Also update the prediction time when toggling currency
             st.session_state.last_prediction_time = datetime.now()
-            st.rerun()  # Add rerun to force refreshing the app when toggling currency
         
         if st.button(button_label, key="kes_converter", on_click=toggle_currency_and_update_time):
-            # Removed st.rerun() since it's now called in the callback function
-            pass
+            # Instead, perform the rerun here after the callback completes
+            st.rerun()
             
         if st.session_state.show_kes:
             st.caption(f"Exchange rate: $1 = KSh {KES_EXCHANGE_RATE} (as of today)")
