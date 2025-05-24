@@ -692,8 +692,9 @@ def main():
         date_color = "#4CAF50" if dark_mode else "#1E88E5"
         time_color = "#757575" if dark_mode else "#9E9E9E"
         
-        # Use the simplest and most compatible approach
-        st.markdown("<div style='height: 10px;'></div>", unsafe_allow_html=True)
+        # Get the current date and time for display
+        current_time = datetime.now().strftime("%H:%M:%S")
+        current_date = datetime.now().strftime("%d %b %Y")
         
         # Create a simple date display with strong visual styling
         date_display = f"""
@@ -701,21 +702,23 @@ def main():
                     border-left: 4px solid {date_color}; margin-bottom: 10px;">
             <div style="font-weight: bold; font-size: 0.9rem; margin-bottom: 8px;">Prediction Date:</div>
             <div style="font-size: 1.2rem; color: {date_color}; font-weight: bold;">
-                {now.strftime("%d %b %Y")}
+                {current_date}
             </div>
             <div style="font-size: 0.9rem; color: {time_color}; margin-top: 5px;">
-                Generated at {now.strftime("%H:%M:%S")}
+                Generated at {current_time}
             </div>
             <div style="font-size: 0.75rem; color: {time_color}; margin-top: 5px;">
-                Click refresh button to update
+                Server time
             </div>
         </div>
         """
         
         st.markdown(date_display, unsafe_allow_html=True)
         
-        # Add a bold, colorful refresh button
-        if st.button("🔄 Update Date & Time", 
+        # Add a refresh button with a properly displayed calendar icon
+        refresh_label = "📅 Update Date & Time"  # Using a different calendar emoji that works across platforms
+        
+        if st.button(refresh_label, 
                    key=f"refresh_date_{refresh_key}",
                    help="Click to update the prediction date and time to current moment"):
             st.rerun()
