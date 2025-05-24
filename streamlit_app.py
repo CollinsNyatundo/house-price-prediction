@@ -398,16 +398,92 @@ def main():
     random_id = get_random_id()
     st.markdown(f'<div id="{random_id}" style="display: none;"></div>', unsafe_allow_html=True)
     
+    # Add custom CSS for tooltips
+    st.markdown("""
+    <style>
+    /* Custom tooltip styles */
+    .tooltip {
+        position: relative;
+        display: inline-block;
+        cursor: help;
+    }
+    
+    .tooltip .tooltiptext {
+        visibility: hidden;
+        width: 250px;
+        background-color: rgba(0, 0, 0, 0.8);
+        color: #fff;
+        text-align: left;
+        border-radius: 6px;
+        padding: 8px 12px;
+        position: absolute;
+        z-index: 1;
+        bottom: 125%;
+        left: 50%;
+        margin-left: -125px;
+        opacity: 0;
+        transition: opacity 0.3s;
+        font-size: 14px;
+        line-height: 1.4;
+        box-shadow: 0px 3px 15px rgba(0,0,0,0.2);
+    }
+    
+    .tooltip .tooltiptext::after {
+        content: "";
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        margin-left: -5px;
+        border-width: 5px;
+        border-style: solid;
+        border-color: rgba(0, 0, 0, 0.8) transparent transparent transparent;
+    }
+    
+    .tooltip:hover .tooltiptext {
+        visibility: visible;
+        opacity: 1;
+    }
+    
+    /* Help icon */
+    .help-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 18px;
+        height: 18px;
+        background-color: rgba(33, 150, 243, 0.1);
+        color: #2196F3;
+        border-radius: 50%;
+        font-size: 12px;
+        font-weight: bold;
+        margin-left: 5px;
+        cursor: help;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+    
     # Sidebar with app info and inputs
     with st.sidebar:
         st.image("https://img.icons8.com/fluency/96/000000/cottage.png", width=80)
         st.title("House Price Prediction")
         
+        # Add an app description with tooltip help
         st.markdown("### About This App")
-        st.info(
-            "This application helps predict house prices based on key features. "
-            "Adjust the sliders to see how different features affect the predicted price."
-        )
+        st.markdown("""
+        <div>
+            This application helps predict house prices based on key features.
+            <span class="tooltip">
+                <span class="help-icon">?</span>
+                <span class="tooltiptext">
+                    <b>How to use this app:</b><br>
+                    1. Adjust the sliders in the sidebar<br>
+                    2. See the prediction update automatically<br>
+                    3. Explore the visualizations for deeper insights<br>
+                    4. Toggle between USD and KES currency
+                </span>
+            </span>
+        </div>
+        """, unsafe_allow_html=True)
         
         st.markdown("### Input Parameters")
         # Add unique keys to force re-execution when values change
@@ -415,8 +491,19 @@ def main():
         def update_prediction_time():
             st.session_state.last_prediction_time = datetime.now()
         
+        # Add tooltips to sliders
+        st.markdown("""
+        <div class="tooltip">
+            Size (sq ft) 
+            <span class="help-icon">?</span>
+            <span class="tooltiptext">
+                Adjust this slider to set the total interior living space of the house. 
+                Larger homes generally cost more.
+            </span>
+        </div>
+        """, unsafe_allow_html=True)
         size = st.slider(
-            "Size (sq ft)", 
+            label="",  # Empty label since we're using custom HTML above
             min_value=1000,
             max_value=3500,
             value=2000,
@@ -425,8 +512,18 @@ def main():
             on_change=update_prediction_time
         )
         
+        st.markdown("""
+        <div class="tooltip">
+            Bedrooms 
+            <span class="help-icon">?</span>
+            <span class="tooltiptext">
+                Select the number of bedrooms in the house.
+                More bedrooms typically increase the property value.
+            </span>
+        </div>
+        """, unsafe_allow_html=True)
         bedrooms = st.slider(
-            "Bedrooms",
+            label="",
             min_value=1,
             max_value=5,
             value=3,
@@ -435,8 +532,18 @@ def main():
             on_change=update_prediction_time
         )
         
+        st.markdown("""
+        <div class="tooltip">
+            Bathrooms 
+            <span class="help-icon">?</span>
+            <span class="tooltiptext">
+                Select the number of bathrooms in the house.
+                Additional bathrooms add significant value to a home.
+            </span>
+        </div>
+        """, unsafe_allow_html=True)
         bathrooms = st.slider(
-            "Bathrooms",
+            label="",
             min_value=1,
             max_value=3,
             value=2,
@@ -634,6 +741,18 @@ def main():
     cols = st.columns([2, 2, 1])
     
     with cols[0]:
+        # Add tooltip to price display
+        st.markdown("""
+        <div class="tooltip" style="margin-bottom: 8px;">
+            Predicted House Price 
+            <span class="help-icon">?</span>
+            <span class="tooltiptext">
+                This is the estimated price based on the features you selected.
+                The prediction is calculated using a linear regression model.
+            </span>
+        </div>
+        """, unsafe_allow_html=True)
+        
         st.markdown(f"""
         <div class="metric-container">
             <div class="metric-title">Predicted House Price (USD)</div>
@@ -646,10 +765,21 @@ def main():
         st.markdown(f"Price per sq ft: **${price_per_sqft:.2f}**")
     
     with cols[1]:
-        # Currency converter (more reliable implementation with improved styling)
+        # Currency converter with tooltip
         if 'show_kes' not in st.session_state:
             st.session_state.show_kes = False
             
+        st.markdown("""
+        <div class="tooltip" style="margin-bottom: 8px;">
+            Currency Conversion 
+            <span class="help-icon">?</span>
+            <span class="tooltiptext">
+                Click the button below to toggle between USD and Kenyan Shillings.
+                The conversion uses a fixed exchange rate for demonstration.
+            </span>
+        </div>
+        """, unsafe_allow_html=True)
+        
         kes_price = predicted_price * KES_EXCHANGE_RATE
         
         if st.session_state.show_kes:
@@ -676,12 +806,22 @@ def main():
             st.caption(f"Exchange rate: $1 = KSh {KES_EXCHANGE_RATE} (as of today)")
     
     with cols[2]:
-        # Use the timestamp from session state for displaying the prediction date
-        # This ensures the date updates whenever the user changes input values
-        now = st.session_state.last_prediction_time
-        current_date = now.strftime("%d %b %Y")
+        # Add tooltip to date display
+        st.markdown("""
+        <div class="tooltip" style="margin-bottom: 8px;">
+            Date Information 
+            <span class="help-icon">?</span>
+            <span class="tooltiptext">
+                Shows when this prediction was generated.
+                Click the refresh button to update to the current time.
+            </span>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        # Get the current date and time for server-side display
+        now = datetime.now()
         current_time = now.strftime("%H:%M:%S")
-        tz_display = "System local time"
+        current_date = now.strftime("%d %b %Y")
         
         # Force refresh with a unique key to ensure the component updates
         refresh_key = get_random_id()
@@ -690,10 +830,6 @@ def main():
         # Using a more prominent and colorful style
         date_color = "#4CAF50" if dark_mode else "#1E88E5"
         time_color = "#757575" if dark_mode else "#9E9E9E"
-        
-        # Get the current date and time for server-side display (fallback)
-        current_time = datetime.now().strftime("%H:%M:%S")
-        current_date = datetime.now().strftime("%d %b %Y")
         
         # Create a very simple HTML component with JavaScript
         local_time_html = f"""
@@ -753,31 +889,99 @@ def main():
         st.markdown(f"**Model Accuracy:**  \n{model_accuracy:.1f}%")
     
     # Metric cards for model performance
-    st.markdown('<p class="blue-heading">Model Performance Metrics</p>', unsafe_allow_html=True)
+    st.markdown('<div class="separator"></div>', unsafe_allow_html=True)
+    
+    # Add tooltip to model performance section
+    st.markdown("""
+    <div style="display: flex; align-items: center; margin-bottom: 10px;">
+        <p class="blue-heading" style="margin: 0;">Model Performance Metrics</p>
+        <span class="tooltip" style="margin-left: 10px;">
+            <span class="help-icon">?</span>
+            <span class="tooltiptext">
+                These metrics show how accurate the prediction model is.
+                Lower RMSE values and R² values closer to 1 indicate better performance.
+            </span>
+        </span>
+    </div>
+    """, unsafe_allow_html=True)
     
     metric_cols = st.columns(3)
     with metric_cols[0]:
-        st.metric("Training Error (RMSE)", f"${metrics['train_rmse']:,.2f}", 
-                 help="Root Mean Square Error on training data - lower is better")
+        st.markdown("""
+        <div class="tooltip" style="margin-bottom: 5px;">
+            Training Error (RMSE)
+            <span class="help-icon">?</span>
+            <span class="tooltiptext">
+                Root Mean Square Error measures the model's accuracy on training data.
+                Lower values indicate better performance.
+            </span>
+        </div>
+        """, unsafe_allow_html=True)
+        st.metric("", f"${metrics['train_rmse']:,.2f}")
+        
     with metric_cols[1]:
-        st.metric("Testing Error (RMSE)", f"${metrics['test_rmse']:,.2f}", 
-                 help="Root Mean Square Error on testing data - lower is better")
+        st.markdown("""
+        <div class="tooltip" style="margin-bottom: 5px;">
+            Testing Error (RMSE)
+            <span class="help-icon">?</span>
+            <span class="tooltiptext">
+                Root Mean Square Error on unseen data - this is the most important 
+                accuracy metric. Lower values indicate better predictions.
+            </span>
+        </div>
+        """, unsafe_allow_html=True)
+        st.metric("", f"${metrics['test_rmse']:,.2f}")
+        
     with metric_cols[2]:
-        st.metric("R² Score", f"{metrics['test_r2']:.4f}", 
-                 help="Coefficient of determination - closer to 1 is better")
+        st.markdown("""
+        <div class="tooltip" style="margin-bottom: 5px;">
+            R² Score
+            <span class="help-icon">?</span>
+            <span class="tooltiptext">
+                Coefficient of determination - indicates how well the model explains 
+                variability in the data. Values closer to 1 are better.
+            </span>
+        </div>
+        """, unsafe_allow_html=True)
+        st.metric("", f"{metrics['test_r2']:.4f}")
     
     # Vizualization section
     st.markdown('<div class="separator"></div>', unsafe_allow_html=True)
-    st.markdown('<p class="orange-heading">Data Visualization</p>', unsafe_allow_html=True)
+    
+    # Add tooltip for visualization section
+    st.markdown("""
+    <div style="display: flex; align-items: center; margin-bottom: 10px;">
+        <p class="orange-heading" style="margin: 0;">Data Visualization</p>
+        <span class="tooltip" style="margin-left: 10px;">
+            <span class="help-icon">?</span>
+            <span class="tooltiptext">
+                Explore different visualizations to understand how house features affect prices.
+                Use the tabs below to switch between different visualization types.
+            </span>
+        </span>
+    </div>
+    """, unsafe_allow_html=True)
     
     # Create tabs for different visualizations
     tab1, tab2, tab3 = st.tabs(["3D Feature Plot", "Price Distribution", "Feature Importance"])
     
     with tab1:
         st.markdown("""
-        This 3D visualization shows how house Size, Bedrooms, and Bathrooms relate to Price.
-        Your selected house is highlighted in red.
-        """)
+        <div>
+            This 3D visualization shows how house Size, Bedrooms, and Bathrooms relate to Price.
+            Your selected house is highlighted in red.
+            <span class="tooltip">
+                <span class="help-icon">?</span>
+                <span class="tooltiptext">
+                    <b>Interaction Tips:</b><br>
+                    • Click and drag to rotate the view<br>
+                    • Scroll to zoom in/out<br>
+                    • Double-click to reset the view<br>
+                    • Hover over points to see details
+                </span>
+            </span>
+        </div>
+        """, unsafe_allow_html=True)
         fig_3d = create_3d_scatter(
             house_data,
             highlight_point={'Size': size, 'Bedrooms': bedrooms, 'Bathrooms': bathrooms},
@@ -787,9 +991,18 @@ def main():
     
     with tab2:
         st.markdown("""
-        This histogram shows the distribution of house prices in the dataset.
-        Your predicted price is marked with a dashed red line.
-        """)
+        <div>
+            This histogram shows the distribution of house prices in the dataset.
+            Your predicted price is marked with a dashed red line.
+            <span class="tooltip">
+                <span class="help-icon">?</span>
+                <span class="tooltiptext">
+                    See how your prediction compares to the overall market.
+                    If your line is on the right side, your house is priced higher than average.
+                </span>
+            </span>
+        </div>
+        """, unsafe_allow_html=True)
         price_dist_fig = create_price_distribution_plot(
             house_data, 
             predicted_price=predicted_price,
@@ -799,9 +1012,19 @@ def main():
     
     with tab3:
         st.markdown("""
-        This chart shows how much each feature contributes to the house price.
-        Higher values mean the feature has a stronger impact on the price.
-        """)
+        <div>
+            This chart shows how much each feature contributes to the house price.
+            Higher values mean the feature has a stronger impact on the price.
+            <span class="tooltip">
+                <span class="help-icon">?</span>
+                <span class="tooltiptext">
+                    The bars represent the coefficients from the model.
+                    For example, if Size has a coefficient of 100, each additional
+                    square foot adds $100 to the predicted price.
+                </span>
+            </span>
+        </div>
+        """, unsafe_allow_html=True)
         importance_fig = create_feature_importance_plot(importance, dark_mode=dark_mode)
         st.plotly_chart(importance_fig, use_container_width=True)
     
