@@ -695,21 +695,87 @@ def main():
         current_time = datetime.now().strftime("%H:%M:%S")
         current_date = datetime.now().strftime("%d %b %Y")
         
-        # Create a simple date display with strong visual styling
+        # Use HTML/JavaScript to display the user's actual local time
         date_display = f"""
         <div style="background-color: rgba(0,0,0,0.05); padding: 15px; border-radius: 5px; 
                     border-left: 4px solid {date_color}; margin-bottom: 10px;">
             <div style="font-weight: bold; font-size: 0.9rem; margin-bottom: 8px;">Prediction Date:</div>
-            <div style="font-size: 1.2rem; color: {date_color}; font-weight: bold;">
+            
+            <!-- Server-rendered date (shown briefly until JavaScript runs) -->
+            <div id="server-date" style="font-size: 1.2rem; color: {date_color}; font-weight: bold;">
                 {current_date}
             </div>
-            <div style="font-size: 0.9rem; color: {time_color}; margin-top: 5px;">
+            <div id="server-time" style="font-size: 0.9rem; color: {time_color}; margin-top: 5px;">
                 Generated at {current_time}
             </div>
-            <div style="font-size: 0.75rem; color: {time_color}; margin-top: 5px;">
-                Server time
+            
+            <!-- JavaScript will populate these elements with local time -->
+            <div id="local-date" style="display: none; font-size: 1.2rem; color: {date_color}; font-weight: bold;"></div>
+            <div id="local-time" style="display: none; font-size: 0.9rem; color: {time_color}; margin-top: 5px;"></div>
+            
+            <div id="timezone-display" style="font-size: 0.75rem; color: {time_color}; margin-top: 5px;">
+                Loading your local time...
             </div>
         </div>
+
+        <script>
+            (function() {{
+                try {{
+                    // Get current date and time
+                    var now = new Date();
+                    
+                    // Format date: DD MMM YYYY
+                    var day = String(now.getDate()).padStart(2, '0');
+                    var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+                    var month = monthNames[now.getMonth()];
+                    var year = now.getFullYear();
+                    var formattedDate = day + ' ' + month + ' ' + year;
+                    
+                    // Format time: HH:MM:SS
+                    var hours = String(now.getHours()).padStart(2, '0');
+                    var minutes = String(now.getMinutes()).padStart(2, '0');
+                    var seconds = String(now.getSeconds()).padStart(2, '0');
+                    var formattedTime = 'Generated at ' + hours + ':' + minutes + ':' + seconds;
+                    
+                    // Get timezone name
+                    var timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || 
+                                  'Your local timezone';
+                    
+                    // Hide server elements and show local time
+                    document.getElementById('server-date').style.display = 'none';
+                    document.getElementById('server-time').style.display = 'none';
+                    
+                    // Update local time elements
+                    var localDateEl = document.getElementById('local-date');
+                    var localTimeEl = document.getElementById('local-time');
+                    
+                    localDateEl.textContent = formattedDate;
+                    localTimeEl.textContent = formattedTime;
+                    
+                    // Show local time elements
+                    localDateEl.style.display = 'block';
+                    localTimeEl.style.display = 'block';
+                    
+                    // Update timezone display
+                    document.getElementById('timezone-display').textContent = timezone;
+                    
+                    // Set up interval to update the time every second
+                    setInterval(function() {{
+                        var now = new Date();
+                        var hours = String(now.getHours()).padStart(2, '0');
+                        var minutes = String(now.getMinutes()).padStart(2, '0');
+                        var seconds = String(now.getSeconds()).padStart(2, '0');
+                        
+                        document.getElementById('local-time').textContent = 
+                            'Generated at ' + hours + ':' + minutes + ':' + seconds;
+                    }}, 1000);
+                }} catch(e) {{
+                    // If JavaScript fails, keep showing server time
+                    console.error("Error displaying local time:", e);
+                    document.getElementById('timezone-display').textContent = "Server time (JavaScript disabled)";
+                }}
+            }})();
+        </script>
         """
         
         st.markdown(date_display, unsafe_allow_html=True)
