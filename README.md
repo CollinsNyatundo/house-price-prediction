@@ -8,7 +8,7 @@
 A production-ready web application for predicting house prices based on key features such as square footage, number of bedrooms, and bathrooms. This application uses machine learning (Linear Regression) to provide accurate price estimates and visualizes data in an interactive 3D plot.
 
 ![App Screenshot](images/app-screenshot.png)
-*The House Price Prediction App interface showing the interactive 3D visualization (left) and prediction results with feature importance (right). Users can adjust house parameters using sliders in the sidebar and see real-time price predictions in USD with an option to convert to Kenyan Shillings.*
+*Interactive house price prediction dashboard with 3D visualization, real-time price estimates in USD/KES, and feature importance analysis - all driven by machine learning.*
 
 ## 📋 Features
 
